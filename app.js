@@ -1,8 +1,10 @@
 const createError = require('http-errors');
+const coockieSession = require('cookie-session');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const config = require('./config');
 
 const indexRouter = require('./routes/index');
 const newsRouter = require('./routes/news');
@@ -20,6 +22,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(
+  coockieSession({
+    name: 'session',
+    keys: config.keySession,
+    maxAge: config.maxAgeSession, // 24 hours
+  })
+);
 
 app.use(function (req, res, next) {
   res.locals.path = req.path;
